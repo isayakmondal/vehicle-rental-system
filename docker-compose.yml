@@ -3,6 +3,7 @@ version: '3.1'
 services:
 
   mongo:
+    container_name: mongodb
     image: mongo
     restart: always
     environment:
@@ -10,8 +11,13 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - "27017:27017"
+    volumes:
+      - ./vehicleDB:/data/db
+    networks:
+      - backend
 
   mongo-express:
+    container_name: mongo-web-console
     image: mongo-express
     restart: always
     ports:
@@ -20,3 +26,55 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+    networks:
+      - backend
+
+  db:
+    container_name: mysql
+    image: mysql
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./reservationDB:/var/lib/mysql
+
+    networks:
+      - backend
+  postgresdb:
+    container_name: postgres
+    image: postgres
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    # or set shared memory limit when deploy via swarm stack
+    #volumes:
+    #  - type: tmpfs
+    #    target: /dev/shm
+    #    tmpfs:
+    #      size: 134217728 # 128*2^20 bytes = 128Mb
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./customerDB:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  adminer:
+    container_name: adminer-web-console
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+
+
+networks:
+  backend:
