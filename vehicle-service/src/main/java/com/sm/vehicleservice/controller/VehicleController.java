@@ -2,6 +2,7 @@ package com.sm.vehicleservice.controller;
 
 import com.sm.vehicleservice.model.Vehicle;
 import com.sm.vehicleservice.service.VehicleService;
+import com.sm.vehicleservice.util.CustomResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,46 +12,56 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/vehicle")
-public class VehicleController
-{
+public class VehicleController {
     @Autowired
     private VehicleService vehicleService;
+
     @PostMapping
-    public ResponseEntity<String> addVehicle(@RequestBody Vehicle vehicle){
+    public ResponseEntity<?> addVehicle(@RequestBody Vehicle vehicle) {
         vehicleService.add(vehicle);
-        return new ResponseEntity<>("Vehicle Added", HttpStatus.CREATED);
+        CustomResponse response = new CustomResponse("Vehicle Added Successfully", HttpStatus.CREATED.value());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<Vehicle>> getAllVehicle(){
+    public ResponseEntity<List<Vehicle>> getAllVehicle() {
         List<Vehicle> vehicleList = vehicleService.getAllVehicle();
-        return new ResponseEntity<>(vehicleList, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(vehicleList);
     }
 
     @GetMapping("/{vehicleId}")
-    public ResponseEntity<Vehicle> getVehicleById(@PathVariable String vehicleId){
+    public ResponseEntity<?> getVehicleById(@PathVariable String vehicleId) {
         Vehicle vehicle = vehicleService.getVehicle(vehicleId);
-        if(vehicle!=null){
-            return new ResponseEntity<>(vehicle, HttpStatus.OK);
+        if (vehicle != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(vehicle);
         }
-        // Implement Custom Error Message
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        // Implement Custom Response
+        CustomResponse response = new CustomResponse("Vehicle Not Found!", HttpStatus.NOT_FOUND.value());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @PutMapping("/{vehicleId}")
-    public ResponseEntity<String> updateVehicle(@PathVariable String vehicleId, @RequestBody Vehicle vehicle){
-        Boolean isUpdated =  vehicleService.updateVehicle(vehicleId, vehicle);
-        if(isUpdated) return new ResponseEntity<>("Vehicle Updated Successfully", HttpStatus.OK);
+    public ResponseEntity<?> updateVehicle(@PathVariable String vehicleId, @RequestBody Vehicle vehicle) {
+        Boolean isUpdated = vehicleService.updateVehicle(vehicleId, vehicle);
+        if (isUpdated) {
+            CustomResponse response = new CustomResponse("Vehicle Updated Successfully", HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
 
-        return new ResponseEntity<>("Vehicle Not Updated! ", HttpStatus.NOT_FOUND);
+        CustomResponse response = new CustomResponse("Vehicle Not Updated!", HttpStatus.NOT_FOUND.value());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @DeleteMapping("/{vehicleId}")
-    public ResponseEntity<String> deleteVehicle(@PathVariable String vehicleId){
-        Boolean isDeleted =  vehicleService.deleteVehicle(vehicleId);
-        if(isDeleted) { return new ResponseEntity<>("Vehicle Deleted Successfully", HttpStatus.OK); }
+    public ResponseEntity<?> deleteVehicle(@PathVariable String vehicleId) {
+        Boolean isDeleted = vehicleService.deleteVehicle(vehicleId);
+        if (isDeleted) {
+            CustomResponse response = new CustomResponse("Vehicle Deleted Successfully", HttpStatus.OK.value());
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
 
-        return new ResponseEntity<>("Vehicle Not Deleted! ", HttpStatus.NOT_FOUND);
+        CustomResponse response = new CustomResponse("Vehicle Not Deleted!", HttpStatus.NOT_FOUND.value());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
 }
