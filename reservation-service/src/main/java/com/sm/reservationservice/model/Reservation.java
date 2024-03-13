@@ -1,9 +1,11 @@
 package com.sm.reservationservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sm.reservationservice.external.model.Customer;
+import com.sm.reservationservice.external.model.Vehicle;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +30,13 @@ public class Reservation {
     private Double Rating;
     private String review;
 
-
+    @NotBlank(message = "This field is mandatory")
     private String vehicleId;
+    @NotNull(message = "This field is mandatory")
     private Long customerId;
+
+    @Transient
+    private Vehicle vehicle;
+    @Transient
+    private Customer customer;
 }

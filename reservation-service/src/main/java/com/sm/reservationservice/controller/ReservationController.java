@@ -3,6 +3,7 @@ package com.sm.reservationservice.controller;
 import com.sm.reservationservice.model.Reservation;
 import com.sm.reservationservice.service.ReservationService;
 import com.sm.reservationservice.util.CustomResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addReservation(@RequestBody Reservation reservation) {
+    public ResponseEntity<?> addReservation(@Valid @RequestBody Reservation reservation) {
         if (reservationService.addReservation(reservation)) {
 
             CustomResponse response = new CustomResponse("Reservation Added Successfully", HttpStatus.CREATED.value());

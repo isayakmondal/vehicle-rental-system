@@ -1,11 +1,14 @@
 package com.sm.reservationservice.service.impl;
 
+import com.sm.reservationservice.external.model.Customer;
+import com.sm.reservationservice.external.model.Vehicle;
 import com.sm.reservationservice.model.Reservation;
 import com.sm.reservationservice.repository.ReservationRepository;
 import com.sm.reservationservice.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -14,6 +17,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Autowired
     private ReservationRepository reservationRepository;
+
+    private RestTemplate restTemplate = new RestTemplate();
     @Override
     public Boolean addReservation(Reservation reservation) {
         // [Optional] Check reservation based on from and upto dates
@@ -31,6 +36,12 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation getReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+
+        Customer customer = restTemplate.getForObject("http://localhost:9093/customer/" + reservation.getCustomerId(), Customer.class);
+        Vehicle vehicle = restTemplate.getForObject("http://localhost:9091/vehicle/" + reservation.getVehicleId(), Vehicle.class);
+
+        reservation.setCustomer(customer);
+        reservation.setVehicle(vehicle);
         return reservation;
 
     }
@@ -38,7 +49,16 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<Reservation> getAllReservation() {
         List<Reservation> reservationList = reservationRepository.findAll();
-        return reservationList;
+        List<Reservation> updatedReservationList = reservationList.stream().map(reservation -> {
+
+            Customer customer = restTemplate.getForObject("http://localhost:9093/customer/" + reservation.getCustomerId(), Customer.class);
+            Vehicle vehicle = restTemplate.getForObject("http://localhost:9091/vehicle/" + reservation.getVehicleId(), Vehicle.class);
+
+            reservation.setCustomer(customer);
+            reservation.setVehicle(vehicle);
+            return reservation;
+        }).toList();
+        return updatedReservationList;
     }
 
     @Override
