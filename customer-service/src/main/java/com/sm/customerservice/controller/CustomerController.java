@@ -1,5 +1,6 @@
 package com.sm.customerservice.controller;
 
+import com.sm.customerservice.dto.CustomerDTO;
 import com.sm.customerservice.model.Customer;
 import com.sm.customerservice.service.CustomerService;
 import com.sm.customerservice.util.CustomResponse;
@@ -29,8 +30,8 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addCustomer(@RequestBody Customer customer) {
-        if (customerService.addCustomer(customer)) {
+    public ResponseEntity<?> addCustomer(@RequestBody CustomerDTO customerDto) {
+        if (customerService.addCustomer(customerDto)) {
 
             CustomResponse response = new CustomResponse("Customer Added Successfully", HttpStatus.CREATED.value());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -48,8 +49,8 @@ public class CustomerController {
 
     //Implement Update and Delete mappings
     @PutMapping("/{customerId}")
-    public ResponseEntity<?> updateCustomer(@PathVariable Long customerId, @RequestBody Customer customer){
-        if(customerService.updateCustomer(customerId, customer)){
+    public ResponseEntity<?> updateCustomer(@PathVariable Long customerId, @RequestBody CustomerDTO customerDto){
+        if(customerService.updateCustomer(customerId, customerDto)){
             CustomResponse response = new CustomResponse("Customer Updated Successfully", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }

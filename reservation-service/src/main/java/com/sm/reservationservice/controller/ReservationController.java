@@ -1,5 +1,6 @@
 package com.sm.reservationservice.controller;
 
+import com.sm.reservationservice.dto.ReservationDTO;
 import com.sm.reservationservice.model.Reservation;
 import com.sm.reservationservice.service.ReservationService;
 import com.sm.reservationservice.util.CustomResponse;
@@ -30,8 +31,8 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addReservation(@Valid @RequestBody Reservation reservation) {
-        if (reservationService.addReservation(reservation)) {
+    public ResponseEntity<?> addReservation(@Valid @RequestBody ReservationDTO reservationDto) {
+        if (reservationService.addReservation(reservationDto)) {
 
             CustomResponse response = new CustomResponse("Reservation Added Successfully", HttpStatus.CREATED.value());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -48,8 +49,8 @@ public class ReservationController {
     }
 
     @PutMapping("/{reservationId}")
-    public ResponseEntity<?> updateReservation(@PathVariable Long reservationId, @RequestBody Reservation reservation){
-        if(reservationService.updateReservation(reservationId, reservation)){
+    public ResponseEntity<?> updateReservation(@PathVariable Long reservationId, @RequestBody ReservationDTO reservationDto){
+        if(reservationService.updateReservation(reservationId, reservationDto)){
             CustomResponse response = new CustomResponse("Reservation Updated Successfully", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }

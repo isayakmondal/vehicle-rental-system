@@ -1,5 +1,6 @@
 package com.sm.reservationservice.service.impl;
 
+import com.sm.reservationservice.dto.ReservationDTO;
 import com.sm.reservationservice.external.model.Customer;
 import com.sm.reservationservice.external.model.Vehicle;
 import com.sm.reservationservice.model.Reservation;
@@ -20,7 +21,18 @@ public class ReservationServiceImpl implements ReservationService {
 
     private RestTemplate restTemplate = new RestTemplate();
     @Override
-    public Boolean addReservation(Reservation reservation) {
+    public Boolean addReservation(ReservationDTO reservationDto) {
+
+        Reservation reservation = new Reservation();
+        reservation.setReservedDateFrom(reservationDto.getReservedDateFrom());
+        reservation.setReservedDateUpto(reservationDto.getReservedDateUpto());
+        reservation.setRating(reservationDto.getRating());
+        reservation.setReview(reservationDto.getReview());
+        reservation.setVehicleId(reservationDto.getVehicleId());
+        reservation.setCustomerId(reservationDto.getCustomerId());
+        reservation.setVehicle(reservationDto.getVehicle());
+        reservation.setCustomer(reservationDto.getCustomer());
+
         // [Optional] Check reservation based on from and upto dates
         if(reservationRepository.findByVehicleId(reservation.getVehicleId())!=null) return false;
         try {
@@ -62,16 +74,16 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Boolean updateReservation(Long reservationId, Reservation updatedReservation) {
+    public Boolean updateReservation(Long reservationId, ReservationDTO reservationDto) {
         Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
         if(reservation!=null){
-            if(updatedReservation.getIsReserved()!=null) { reservation.setIsReserved(updatedReservation.getIsReserved()); }
-            if(updatedReservation.getReservedDateFrom()!=null) { reservation.setReservedDateFrom(updatedReservation.getReservedDateFrom()); }
-            if(updatedReservation.getReservedDateUpto()!=null) { reservation.setReservedDateUpto(updatedReservation.getReservedDateUpto()); }
-            if(updatedReservation.getRating()!=null) { reservation.setRating(updatedReservation.getRating()); }
-            if(updatedReservation.getReview()!=null) { reservation.setReview(updatedReservation.getReview()); }
-            if(updatedReservation.getVehicleId()!=null) { reservation.setVehicleId(updatedReservation.getVehicleId()); }
-            if(updatedReservation.getCustomerId()!=null) { reservation.setCustomerId(updatedReservation.getCustomerId()); }
+            if(reservationDto.getIsReserved()!=null) { reservation.setIsReserved(reservationDto.getIsReserved()); }
+            if(reservationDto.getReservedDateFrom()!=null) { reservation.setReservedDateFrom(reservationDto.getReservedDateFrom()); }
+            if(reservationDto.getReservedDateUpto()!=null) { reservation.setReservedDateUpto(reservationDto.getReservedDateUpto()); }
+            if(reservationDto.getRating()!=null) { reservation.setRating(reservationDto.getRating()); }
+            if(reservationDto.getReview()!=null) { reservation.setReview(reservationDto.getReview()); }
+            if(reservationDto.getVehicleId()!=null) { reservation.setVehicleId(reservationDto.getVehicleId()); }
+            if(reservationDto.getCustomerId()!=null) { reservation.setCustomerId(reservationDto.getCustomerId()); }
             reservationRepository.save(reservation);
             return true;
         }

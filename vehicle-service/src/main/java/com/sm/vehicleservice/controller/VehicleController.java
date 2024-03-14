@@ -1,5 +1,6 @@
 package com.sm.vehicleservice.controller;
 
+import com.sm.vehicleservice.dto.VehicleDTO;
 import com.sm.vehicleservice.model.Vehicle;
 import com.sm.vehicleservice.service.VehicleService;
 import com.sm.vehicleservice.util.CustomResponse;
@@ -17,8 +18,8 @@ public class VehicleController {
     private VehicleService vehicleService;
 
     @PostMapping
-    public ResponseEntity<?> addVehicle(@RequestBody Vehicle vehicle) {
-        vehicleService.add(vehicle);
+    public ResponseEntity<?> addVehicle(@RequestBody VehicleDTO vehicleDto) {
+        vehicleService.add(vehicleDto);
         CustomResponse response = new CustomResponse("Vehicle Added Successfully", HttpStatus.CREATED.value());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -41,8 +42,8 @@ public class VehicleController {
     }
 
     @PutMapping("/{vehicleId}")
-    public ResponseEntity<?> updateVehicle(@PathVariable String vehicleId, @RequestBody Vehicle vehicle) {
-        Boolean isUpdated = vehicleService.updateVehicle(vehicleId, vehicle);
+    public ResponseEntity<?> updateVehicle(@PathVariable String vehicleId, @RequestBody VehicleDTO vehicleDto) {
+        Boolean isUpdated = vehicleService.updateVehicle(vehicleId, vehicleDto);
         if (isUpdated) {
             CustomResponse response = new CustomResponse("Vehicle Updated Successfully", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body(response);

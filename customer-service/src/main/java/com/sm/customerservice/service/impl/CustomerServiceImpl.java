@@ -1,12 +1,12 @@
 package com.sm.customerservice.service.impl;
 
+import com.sm.customerservice.dto.CustomerDTO;
 import com.sm.customerservice.model.Customer;
 import com.sm.customerservice.repository.CustomerRepository;
 import com.sm.customerservice.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,7 +15,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
     @Override
-    public Boolean addCustomer(Customer customer) {
+    public Boolean addCustomer(CustomerDTO customerDto) {
+        Customer customer = new Customer();
+        customer.setName(customerDto.getName());
         Customer savedCustomer = customerRepository.save(customer);
         if(savedCustomer!=null) return true;
         return false;
@@ -33,10 +35,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Boolean updateCustomer(Long customerId, Customer updatedCustomer) {
+    public Boolean updateCustomer(Long customerId, CustomerDTO customerDto) {
         Customer customer = customerRepository.findById(customerId).orElse(null);
         if(customer!=null){
-            if(updatedCustomer.getName()!=null) customer.setName(updatedCustomer.getName());
+            if(customerDto.getName()!=null) customer.setName(customerDto.getName());
             customerRepository.save(customer);
             return true;
         }

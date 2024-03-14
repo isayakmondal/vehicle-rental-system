@@ -1,5 +1,6 @@
 package com.sm.vehicleservice.service.impl;
 
+import com.sm.vehicleservice.dto.VehicleDTO;
 import com.sm.vehicleservice.model.Vehicle;
 import com.sm.vehicleservice.repository.VehicleRepository;
 import com.sm.vehicleservice.service.VehicleService;
@@ -12,9 +13,13 @@ import java.util.List;
 public class VehicleServiceImpl implements VehicleService {
     @Autowired
     private VehicleRepository vehicleRepository;
+
     @Override
-    public Boolean add(Vehicle vehicle) {
-       Vehicle addedVehicle = vehicleRepository.save(vehicle);
+    public Boolean add(VehicleDTO vehicleDto) {
+        Vehicle vehicle = new Vehicle();
+        vehicle.setName(vehicleDto.getName());
+        vehicle.setBrand(vehicleDto.getBrand());
+        Vehicle addedVehicle = vehicleRepository.save(vehicle);
         return true;
     }
 
@@ -30,11 +35,11 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public Boolean updateVehicle(String id, Vehicle updatedVehicle) {
+    public Boolean updateVehicle(String id, VehicleDTO vehicleDto) {
         Vehicle vehicle = vehicleRepository.findById(id).orElse(null);
-        if(vehicle!=null){
-            if(updatedVehicle.getBrand()!=null) vehicle.setBrand(updatedVehicle.getBrand());
-            if(updatedVehicle.getName()!=null) vehicle.setName(updatedVehicle.getName());
+        if (vehicle != null) {
+            if (vehicleDto.getBrand() != null) vehicle.setBrand(vehicleDto.getBrand());
+            if (vehicleDto.getName() != null) vehicle.setName(vehicleDto.getName());
             vehicleRepository.save(vehicle);
             return true;
         }
@@ -43,7 +48,7 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public Boolean deleteVehicle(String vehicleId) {
-        if(getVehicle(vehicleId)!=null) {
+        if (getVehicle(vehicleId) != null) {
             vehicleRepository.deleteById(vehicleId);
             return true;
         }
