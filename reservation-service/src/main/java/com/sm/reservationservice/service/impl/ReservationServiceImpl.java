@@ -51,8 +51,8 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation getReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
 
-        Customer customer = restTemplate.getForObject("http://customer-service:9093/customer/" + reservation.getCustomerId(), Customer.class);
-        Vehicle vehicle = restTemplate.getForObject("http://vehicle-service:9091/vehicle/" + reservation.getVehicleId(), Vehicle.class);
+        Customer customer = restTemplate.getForObject("http://customer-service/customer/" + reservation.getCustomerId(), Customer.class);
+        Vehicle vehicle = restTemplate.getForObject("http://vehicle-service/vehicle/" + reservation.getVehicleId(), Vehicle.class);
 
         reservation.setCustomer(customer);
         reservation.setVehicle(vehicle);
@@ -65,8 +65,8 @@ public class ReservationServiceImpl implements ReservationService {
         List<Reservation> reservationList = reservationRepository.findAll();
         List<Reservation> updatedReservationList = reservationList.stream().map(reservation -> {
 
-            Customer customer = restTemplate.getForObject("http://customer-service:9093/customer/" + reservation.getCustomerId(), Customer.class);
-            Vehicle vehicle = restTemplate.getForObject("http://vehicle-service:9091/vehicle/" + reservation.getVehicleId(), Vehicle.class);
+            Customer customer = restTemplate.getForObject("http://customer-service/customer/" + reservation.getCustomerId(), Customer.class);
+            Vehicle vehicle = restTemplate.getForObject("http://vehicle-service/vehicle/" + reservation.getVehicleId(), Vehicle.class);
 
             reservation.setCustomer(customer);
             reservation.setVehicle(vehicle);
