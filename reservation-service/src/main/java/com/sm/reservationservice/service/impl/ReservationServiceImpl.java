@@ -1,11 +1,15 @@
 package com.sm.reservationservice.service.impl;
 
+import com.sm.reservationservice.client.CustomerClient;
+import com.sm.reservationservice.client.VehicleClient;
 import com.sm.reservationservice.dto.ReservationDTO;
 import com.sm.reservationservice.external.model.Customer;
 import com.sm.reservationservice.external.model.Vehicle;
 import com.sm.reservationservice.model.Reservation;
 import com.sm.reservationservice.repository.ReservationRepository;
 import com.sm.reservationservice.service.ReservationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -16,11 +20,16 @@ import java.util.List;
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ReservationServiceImpl.class);
     @Autowired
     private ReservationRepository reservationRepository;
 
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private VehicleClient vehicleClient;
+    @Autowired
+    private CustomerClient customerClient;
 
     @Override
     public Boolean addReservation(ReservationDTO reservationDto) {
@@ -49,15 +58,17 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation getReservation(Long reservationId) {
+        logger.info("Inside getReservation service");
         Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
 
-        Customer customer = restTemplate.getForObject("http://customer-service/customer/" + reservation.getCustomerId(), Customer.class);
-        Vehicle vehicle = restTemplate.getForObject("http://vehicle-service/vehicle/" + reservation.getVehicleId(), Vehicle.class);
+//        Customer customer = restTemplate.getForObject("http://customer-service/customer/" + reservation.getCustomerId(), Customer.class);
+//        Vehicle vehicle = restTemplate.getForObject("http://vehicle-service/vehicle/" + reservation.getVehicleId(), Vehicle.class);
 
+        Customer customer = customerClient.getCustomer(reservation.getCustomerId());
+        Vehicle vehicle = vehicleClient.getVehicle(reservation.getVehicleId());
         reservation.setCustomer(customer);
         reservation.setVehicle(vehicle);
         return reservation;
-
     }
 
     @Override
