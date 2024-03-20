@@ -5,6 +5,8 @@ import com.sm.reservationservice.model.Reservation;
 import com.sm.reservationservice.service.ReservationService;
 import com.sm.reservationservice.util.CustomResponse;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +17,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/reservation")
 public class ReservationController {
-    
+
     @Autowired
     private ReservationService reservationService;
+
+    private static final Logger logger = LoggerFactory.getLogger(ReservationController.class);
+
     @GetMapping("/{reservationId}")
     public ResponseEntity<?> getReservation(@PathVariable Long reservationId) {
+        logger.info("Inside getReservation controller");
         Reservation reservation = reservationService.getReservation(reservationId);
         if (reservation != null) {
 
@@ -43,14 +49,14 @@ public class ReservationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Reservation>> getAllReservation(){
+    public ResponseEntity<List<Reservation>> getAllReservation() {
         List<Reservation> reservationList = reservationService.getAllReservation();
         return ResponseEntity.status(HttpStatus.OK).body(reservationList);
     }
 
     @PutMapping("/{reservationId}")
-    public ResponseEntity<?> updateReservation(@PathVariable Long reservationId, @RequestBody ReservationDTO reservationDto){
-        if(reservationService.updateReservation(reservationId, reservationDto)){
+    public ResponseEntity<?> updateReservation(@PathVariable Long reservationId, @RequestBody ReservationDTO reservationDto) {
+        if (reservationService.updateReservation(reservationId, reservationDto)) {
             CustomResponse response = new CustomResponse("Reservation Updated Successfully", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
@@ -60,8 +66,8 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{reservationId}")
-    public ResponseEntity<?> deleteReservation(@PathVariable Long reservationId){
-        if(reservationService.deleteReservation(reservationId)){
+    public ResponseEntity<?> deleteReservation(@PathVariable Long reservationId) {
+        if (reservationService.deleteReservation(reservationId)) {
             CustomResponse response = new CustomResponse("Reservation Deleted Successfully", HttpStatus.OK.value());
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
