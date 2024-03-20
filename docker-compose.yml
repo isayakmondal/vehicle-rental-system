@@ -25,6 +25,8 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: root
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
     networks:
       - backend
@@ -72,6 +74,13 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    networks:
+      - backend
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
     networks:
       - backend
 
